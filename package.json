@@ -1,0 +1,39 @@
+{
+  "name": "runconfig-generator",
+  "version": "1.0.0",
+  "description": "Automatically generate Webstorm run configurations from npm run scripts of package.json",
+  "main": "index.js",
+  "bin": {
+    "runconfig-generator": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/T-vK/runconfig-generator.git"
+  },
+  "keywords": [
+    "webstorm",
+    "intellij",
+    "run",
+    "configuration",
+    "generate",
+    "auto",
+    "npm",
+    "node",
+    "scripts",
+    "environment",
+    "variables"
+  ],
+  "author": "T-vK",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/T-vK/runconfig-generator/issues"
+  },
+  "homepage": "https://github.com/T-vK/runconfig-generator#readme",
+  "dependencies": {
+    "dotenv": "^6.0.0",
+    "fs-extra": "^7.0.0"
+  }
+}
