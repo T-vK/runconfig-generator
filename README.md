@@ -22,11 +22,17 @@ Go to your project folder and run `runconfig-generator`.
 
 ## How to specify environment variables
 `runconfig-generator --env`  
+
+*Global variables*  
 Create a `.env` file in your project for variables that shall be used by ALL run configurations.
-For variables that should only be used for a certain run script create a folder called `.env-files` in your project and name them after your run scripts with a .env extension.
-For the package.json example above, you'd be using `.env-files/unit-tests.env` and `.env-files/start.env`.
-.env files are optional and if you specify both a global one and a script-specific one, the variables of both files will be used.
-Script-specific variables have a higher priority when duplicated variables are being specified.
+
+*Script-specific variables*  
+Create a folder called `.env-files` in your project for variables that should only be used for a certain run script.
+In this folder create files named after your run scripts with a .env extension.
+For the package.json example above, you could create `.env-files/unit-tests.env` and `.env-files/start.env`.
+
+`.env` files are optional and will only be taken into consideration when the `--env`-flag is being passed.  
+If you specify the same variable in the global .env and a script-specific.env one, the script-specific variable will be used.  
 
 ## How it works
-It parses your `package.json` script section and uses them to create npm run configurations under `.idea/runConfigurations` in your project, that WebStorm will automatically recognize.
+This tool parses your `package.json`'s script section and uses the entries to create npm run configuration files under `.idea/runConfigurations` in your project so that WebStorm will automatically recognize them.
