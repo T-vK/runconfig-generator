@@ -1,6 +1,6 @@
 {
   "name": "runconfig-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automatically generate Webstorm run configurations from npm run scripts of package.json",
   "main": "index.js",
   "bin": {
