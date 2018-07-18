@@ -12,7 +12,7 @@ Add entries to the script section of your package.json. E.g.:
   "name": "example project",
   "main": "index.js",
   "scripts": {
-    "unit-tests": "gulp mocha"
+    "unit-tests": "mocha ./test"
     "start": "node index.js"
   }
 }
@@ -45,4 +45,4 @@ If you only need to be able to run it using the run configuration GUI in WebStor
 This will embed the env vars in the run configurations.
 
 ## How it works
-This tool parses your `package.json`'s script section and uses the entries to create npm run configuration files under `.idea/runConfigurations` in your project so that WebStorm will automatically recognize them.
+This tool parses your `package.json`'s script section and uses the entries to create npm (or mocha if the script begins with a mocha command) run configuration files under `.idea/runConfigurations` in your project so that WebStorm will automatically recognize them. 
