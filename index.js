@@ -2,10 +2,10 @@
 const fs = require('fs-extra')
 const dotenv = require('dotenv')
 
-const PACKAGE = require('./package.json')
-const MAIN_ENV_FILE = './.env'
-const ENV_FILE_DIR = './.env-files'
-const RUN_CONFIGS_DIR = './.idea/runConfigurations'
+const PACKAGE = require(`${process.cwd()}/package.json`)
+const MAIN_ENV_FILE = `${process.cwd()}/.env`
+const ENV_FILE_DIR = `${process.cwd()}/.env-files`
+const RUN_CONFIGS_DIR = `${process.cwd()}/.idea/runConfigurations`
 
 let env = {}
 
@@ -20,7 +20,26 @@ fs.readFile(MAIN_ENV_FILE).then(fileContent=>{
         }).catch(err=>{
             // console.log(err)
         }).finally(()=>{
-            const runConfig = generateRunconfig(scriptName, scriptName, process.execPath, (process.argv.length > 2 && process.argv[2] == "--env") ? env : {})
+            const script = PACKAGE.scripts[scriptName]
+            const scriptSplit = script.split(' ')
+            const cmd = scriptSplit[0]
+            let runConfig
+            if (cmd === 'mocha') {
+                runConfig = generateRunConfig({
+                    type: 'mocha',
+                    nodeBin: process.execPath,
+                    env: (process.argv.length > 2 && process.argv[2] == "--env") ? env : {},
+                    testDir: scriptSplit.length > 1 ? scriptSplit[1] : './',
+                    args: scriptSplit.length > 2 ? scriptSplit.slice(2).join(' ') : ''
+                })
+            } else {
+                runConfig = generateRunConfig({
+                    type: 'npm',
+                    script: scriptName, 
+                    nodeBin: process.execPath,
+                    env: (process.argv.length > 2 && process.argv[2] == "--env") ? env : {}
+                })
+            }
             const runConfigPath = `${RUN_CONFIGS_DIR}/generated_${scriptName}.xml`
             fs.ensureFile(runConfigPath).then(()=>{
                 return fs.writeFile(runConfigPath, runConfig)
@@ -32,20 +51,41 @@ fs.readFile(MAIN_ENV_FILE).then(fileContent=>{
 })
 
 
-function generateRunconfig(name, scriptName, nodePath="node", env={}, singleton=true, packagejsonPath="$PROJECT_DIR$/package.json") {
+function generateRunConfig(cfg) {
+    //type, name, scriptName, nodePath="node", env={}, singleton=true, packagejsonPath="$PROJECT_DIR$/package.json"
+if (cfg.type === 'npm' && cfg.command === 'run') {
 return `
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="${name}" type="js.build_tools.npm" factoryName="npm" singleton="${singleton}">
-    <package-json value="${packagejsonPath}" />
+  <configuration default="false" name="${cfg.name}" type="js.build_tools.npm" factoryName="npm" singleton="${cfg.singleton || 'true'}">
+    <package-json value="${cfg.packageJson}" />
     <command value="run" />
     <scripts>
-      <script value="${scriptName}" />
+      <script value="${cfg.script}" />
     </scripts>
-    <node-interpreter value="${nodePath}" />
+    <node-interpreter value="${cfg.nodeBin || 'node'}" />
     <envs>
-${ Object.keys(env).map((k=>'      <env name="' + k + '" value="' + env[k] + '" />')).join('\n') }
+${ Object.keys(cfg.env).map((k=>'      <env name="' + k + '" value="' + cfg.env[k] + '" />')).join('\n') }
     </envs>
     <method />
   </configuration>
 </component>`
+} else if (cfg.type === 'mocha') {
+return `
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="${cfg.name}" type="mocha-javascript-test-runner" factoryName="Mocha" singleton="${cfg.singleton || 'true'}">
+    <node-interpreter>${cfg.nodeBin}</node-interpreter>
+    <node-options />
+    <working-directory>$PROJECT_DIR$</working-directory>
+    <envs>
+${ Object.keys(env).map((k=>'      <env name="' + k + '" value="' + env[k] + '" />')).join('\n') }
+    </envs>
+    <ui>${cfg.ui || 'bdd'}</ui>
+    <extra-mocha-options />
+    <test-kind>DIRECTORY</test-kind>
+    <test-directory>$PROJECT_DIR$/${cfg.testDir || './test'}</test-directory>
+    <recursive>${cfg.reursive || 'true'}</recursive>
+    <method />
+  </configuration>
+</component>`
+}
 }
