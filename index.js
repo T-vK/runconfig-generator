@@ -9,11 +9,18 @@ const RUN_CONFIGS_DIR = `${process.cwd()}/.idea/runConfigurations`
 
 let env = {}
 
-fs.readFile(MAIN_ENV_FILE).then(fileContent=>{
+let initPromise = process.argv.includes("--clean") ? fs.emptyDir(RUN_CONFIGS_DIR) : Promise.resolve()
+
+initPromise.then(()=>{
+    if (process.argv.includes("--clean"))
+        console.log("Old Run Configurations have been removed.")
+    return fs.readFile(MAIN_ENV_FILE)
+}).then(fileContent=>{
     env = { ...env, ...dotenv.parse(fileContent)}
 }).catch(err=>{
     // console.log(err)
 }).finally(()=>{
+    let promiseArr = []
     Object.keys(PACKAGE.scripts).forEach(scriptName => {
         let promise = fs.readFile(`${ENV_FILE_DIR}/${scriptName}.env`).then(fileContent=>{
             env = { ...env, ...dotenv.parse(fileContent)}
@@ -25,28 +32,35 @@ fs.readFile(MAIN_ENV_FILE).then(fileContent=>{
             const cmd = scriptSplit[0]
             let runConfig
             if (cmd === 'mocha') {
-                runConfig = generateRunConfig({
+                runConfig = {
+                    name: scriptName,
                     type: 'mocha',
                     nodeBin: process.execPath,
-                    env: (process.argv.length > 2 && process.argv[2] == "--env") ? env : {},
+                    env: (process.argv.includes("--env")) ? env : {},
                     testDir: scriptSplit.length > 1 ? scriptSplit[1] : './',
                     args: scriptSplit.length > 2 ? scriptSplit.slice(2).join(' ') : ''
-                })
+                }
             } else {
-                runConfig = generateRunConfig({
+                runConfig = {
+                    name: scriptName,
                     type: 'npm',
+                    command: 'run',
                     script: scriptName, 
                     nodeBin: process.execPath,
-                    env: (process.argv.length > 2 && process.argv[2] == "--env") ? env : {}
-                })
+                    env: (process.argv.includes("--env")) ? env : {}
+                }
             }
             const runConfigPath = `${RUN_CONFIGS_DIR}/generated_${scriptName}.xml`
-            fs.ensureFile(runConfigPath).then(()=>{
-                return fs.writeFile(runConfigPath, runConfig)
+            return fs.ensureFile(runConfigPath).then(()=>{
+                return fs.writeFile(runConfigPath, generateRunConfig(runConfig))
             }).then(()=>{
-                // console.log("runconfig created")
+                console.log(`Generated "${runConfig.type}" Run Configuration for "${runConfig.name}".`)
             }).catch(console.error)
         })
+        promiseArr.push(promise)
+    })
+    Promise.all(promiseArr).then(()=>{
+        console.log("Warning: A WebStorm restart might be required!")
     })
 })
 
@@ -57,7 +71,7 @@ if (cfg.type === 'npm' && cfg.command === 'run') {
 return `
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="${cfg.name}" type="js.build_tools.npm" factoryName="npm" singleton="${cfg.singleton || 'true'}">
-    <package-json value="${cfg.packageJson}" />
+    <package-json value="$PROJECT_DIR$/${cfg.packageJson || 'package.json'}" />
     <command value="run" />
     <scripts>
       <script value="${cfg.script}" />
@@ -77,7 +91,7 @@ return `
     <node-options />
     <working-directory>$PROJECT_DIR$</working-directory>
     <envs>
-${ Object.keys(env).map((k=>'      <env name="' + k + '" value="' + env[k] + '" />')).join('\n') }
+${ Object.keys(cfg.env).map((k=>'      <env name="' + k + '" value="' + cfg.env[k] + '" />')).join('\n') }
     </envs>
     <ui>${cfg.ui || 'bdd'}</ui>
     <extra-mocha-options />

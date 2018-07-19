@@ -1,19 +1,45 @@
 {
-  "name": "runconfig-generator",
-  "version": "1.0.2",
-  "description": "Automatically generate Webstorm run configurations from npm run scripts of package.json",
-  "main": "index.js",
+  "_from": "runconfig-generator@1.0.3",
+  "_id": "runconfig-generator@1.0.3",
+  "_inBundle": false,
+  "_integrity": "sha512-fTa0PNNHAP5D0wXZMWV4E7osMHNpMhqTKcESNgvrq+97F7Vs+QACC5ghUTaQaaJQlOLfIIlMtYipwx9rFI7Sog==",
+  "_location": "/runconfig-generator",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "runconfig-generator@1.0.4",
+    "name": "runconfig-generator",
+    "escapedName": "runconfig-generator",
+    "rawSpec": "1.0.3",
+    "saveSpec": null,
+    "fetchSpec": "1.0.3"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/runconfig-generator/-/runconfig-generator-1.0.3.tgz",
+  "_shasum": "25aaa7ed58151619bee2a4ce2ddbbfa62baa75af",
+  "_spec": "runconfig-generator@1.0.3",
+  "_where": "/home/fedora",
+  "author": {
+    "name": "T-vK"
+  },
   "bin": {
     "runconfig-generator": "./index.js"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "integration-test": "mocha ./test"
+  "bugs": {
+    "url": "https://github.com/T-vK/runconfig-generator/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/T-vK/runconfig-generator.git"
+  "bundleDependencies": false,
+  "dependencies": {
+    "dotenv": "^6.0.0",
+    "fs-extra": "^7.0.0"
   },
+  "deprecated": false,
+  "description": "Automatically generate Webstorm run configurations from npm run scripts of package.json",
+  "homepage": "https://github.com/T-vK/runconfig-generator#readme",
   "keywords": [
     "webstorm",
     "intellij",
@@ -27,14 +53,16 @@
     "environment",
     "variables"
   ],
-  "author": "T-vK",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/T-vK/runconfig-generator/issues"
+  "main": "index.js",
+  "name": "runconfig-generator",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/T-vK/runconfig-generator.git"
   },
-  "homepage": "https://github.com/T-vK/runconfig-generator#readme",
-  "dependencies": {
-    "dotenv": "^6.0.0",
-    "fs-extra": "^7.0.0"
-  }
+  "scripts": {
+    "integration-test": "mocha ./test",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.3"
 }
