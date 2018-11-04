@@ -1,13 +1,15 @@
 {
   "name": "runconfig-generator",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Automatically generate Webstorm run configurations from npm run scripts of package.json",
   "main": "index.js",
   "bin": {
     "runconfig-generator": "./index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./index.js",
+    "mocha-test": "mocha ./tests"
   },
   "repository": {
     "type": "git",
@@ -37,4 +39,3 @@
     "fs-extra": "^7.0.0"
   }
 }
-

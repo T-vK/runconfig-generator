@@ -31,7 +31,14 @@ initPromise.then(()=>{
             const scriptSplit = script.split(' ')
             const cmd = scriptSplit[0]
             let runConfig
-            if (cmd === 'mocha') {
+            if (cmd === 'node') {
+                runConfig = {
+                    name: scriptName,
+                    type: 'node',
+                    env: (process.argv.includes("--env")) ? env : {},
+                    params: scriptSplit.length > 1 ? scriptSplit.slice(1).join(' ') : ''
+                }
+            } else if (cmd === 'mocha') {
                 runConfig = {
                     name: scriptName,
                     type: 'mocha',
@@ -45,7 +52,7 @@ initPromise.then(()=>{
                     name: scriptName,
                     type: 'npm',
                     command: 'run',
-                    script: scriptName, 
+                    script: scriptName,
                     nodeBin: process.execPath,
                     env: (process.argv.includes("--env")) ? env : {}
                 }
@@ -67,7 +74,17 @@ initPromise.then(()=>{
 
 function generateRunConfig(cfg) {
     //type, name, scriptName, nodePath="node", env={}, singleton=true, packagejsonPath="$PROJECT_DIR$/package.json"
-if (cfg.type === 'npm' && cfg.command === 'run') {
+if (cfg.type === 'node') {
+return `
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="${cfg.name}" type="NodeJSConfigurationType" factoryName="Node.js" node-parameters="${cfg.params}" working-dir="$PROJECT_DIR$">
+    <envs>
+${ Object.keys(cfg.env).map((k=>'      <env name="' + k + '" value="' + cfg.env[k] + '" />')).join('\n') }
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>`
+} else if (cfg.type === 'npm' && cfg.command === 'run') {
 return `
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="${cfg.name}" type="js.build_tools.npm" factoryName="npm" singleton="${cfg.singleton || 'true'}">

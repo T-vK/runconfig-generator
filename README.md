@@ -51,4 +51,4 @@ If you want to delete all old Run Configurations before generating the new ones 
 Note: If a Run Configuration is generated it will always automatically overwrite the old one if the old one was also generated (no matter if `--clean has been set`).
 
 ## How it works
-This tool parses your `package.json`'s script section and uses the entries to create npm (or mocha if the script begins with a mocha command) run configuration files under `.idea/runConfigurations` in your project so that WebStorm will automatically recognize them. 
+This tool parses your `package.json`'s script section and uses the entries to create npm run configuration files (or node or mocha configuration files if the script begins with a mocha or node command) under `.idea/runConfigurations` in your project so that WebStorm will automatically recognize them.
