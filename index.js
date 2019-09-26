@@ -111,7 +111,7 @@ return `
 ${ Object.keys(cfg.env).map((k=>'      <env name="' + k + '" value="' + cfg.env[k] + '" />')).join('\n') }
     </envs>
     <ui>${cfg.ui || 'bdd'}</ui>
-    <extra-mocha-options />
+    <extra-mocha-options>${cfg.args}<extra-mocha-options />
     <test-kind>DIRECTORY</test-kind>
     <test-directory>$PROJECT_DIR$/${cfg.testDir || './test'}</test-directory>
     <recursive>${cfg.reursive || 'true'}</recursive>
